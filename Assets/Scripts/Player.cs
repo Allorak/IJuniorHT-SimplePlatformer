@@ -40,11 +40,32 @@ public class Player : MonoBehaviour
         _animator.SetFloat(_speedParameterHash, _isMoving ?  _speed : 0);
     }
 
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (_isGrounded)
+            return;
+
+        if (collision.collider.TryGetComponent(out Ground _) == false)
+            return;
+
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, _groundCheckRaycastDistance);
+
+        if (hits.Length <= 1 || hits[1].collider.TryGetComponent(out Ground _) == false)
+            return;
+
+        _isGrounded = true;
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider.TryGetComponent(out Ground _))
+            _isGrounded = false;
+    }
+
     public void AddCoin()
     {
         _coinsAmount++;
-
-        Debug.Log($"Coins - {_coinsAmount}");
     }
 
     private void Move(Directions direction)
@@ -66,27 +87,5 @@ public class Player : MonoBehaviour
         _rigidBody.AddForce(Vector2.up * _jumpForce);
 
         _isGrounded = false;
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (_isGrounded)
-            return;
-
-        if (collision.collider.TryGetComponent(out Ground _) == false)
-            return;
-
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, _groundCheckRaycastDistance);
-
-        if (hits.Length <= 1 || hits[1].collider.TryGetComponent(out Ground _) == false)
-            return;
-
-        _isGrounded = true;
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.collider.TryGetComponent(out Ground ground))
-            _isGrounded = false;
     }
 }
