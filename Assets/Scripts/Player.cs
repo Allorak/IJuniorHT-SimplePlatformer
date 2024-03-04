@@ -1,13 +1,20 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Health))]
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _groundCheckRaycastDistance;
+    [SerializeField] private float _damage;
+    [SerializeField] private float _attackRange;
+    [SerializeField] private float _attackSphereRadius;
+
+    public Health Health { get; private set; }
 
     private SpriteRenderer _renderer;
     private Animator _animator;
@@ -23,6 +30,7 @@ public class Player : MonoBehaviour
         _renderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody2D>();
+        Health = GetComponent<Health>();
     }
 
     private void Update()
@@ -36,6 +44,9 @@ public class Player : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && _isGrounded)
             Jump();
+        
+        if(Input.GetKey(KeyCode.Mouse0))
+            Attack();
 
         _animator.SetFloat(_speedParameterHash, _isMoving ?  _speed : 0);
     }
@@ -87,5 +98,19 @@ public class Player : MonoBehaviour
         _rigidBody.AddForce(Vector2.up * _jumpForce);
 
         _isGrounded = false;
+    }
+
+    private void Attack()
+    {
+        var playerTransform = transform;
+        
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(playerTransform.position, _attackSphereRadius, playerTransform.forward, _attackRange);
+
+        if (hits.Length <= 1)
+            return;
+
+        foreach (var hit in hits)
+            if (hit.transform.TryGetComponent<Enemy>(out var enemy))
+                enemy.ApplyDamage(_damage);
     }
 }
