@@ -1,17 +1,18 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
-public class HealthPack : MonoBehaviour
+public abstract class PickUp : MonoBehaviour
 {
-    [SerializeField] private float _healAmount = 25;
-    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent<Player>(out var player) == false)
             return;
 
-        player.Health.Heal(_healAmount);
+        ApplyEffect(player);
         Destroy(gameObject);
+    }
+
+    protected virtual void ApplyEffect(Player player)
+    {
     }
 }
