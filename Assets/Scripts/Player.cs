@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -12,7 +13,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _groundCheckRaycastDistance;
     [SerializeField] private float _damage;
     [SerializeField] private float _attackRange;
-    [SerializeField] private float _attackSphereRadius;
+    [SerializeField] private SpriteRenderer _swordSpriteRenderer;
 
     public Health Health { get; private set; }
 
@@ -25,7 +26,7 @@ public class Player : MonoBehaviour
     private int _jumpTriggerHash = Animator.StringToHash("HasJumped");
     private int _coinsAmount = 0;
 
-    private void Start()
+    private void Awake()
     {
         _renderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
@@ -33,24 +34,10 @@ public class Player : MonoBehaviour
         Health = GetComponent<Health>();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetKey(KeyCode.D))
-            Move(Directions.Right);
-        else if (Input.GetKey(KeyCode.A))
-            Move(Directions.Left);
-        else
-            _isMoving = false;
-
-        if (Input.GetKey(KeyCode.Space) && _isGrounded)
-            Jump();
-        
-        if(Input.GetKey(KeyCode.Mouse0))
-            Attack();
-
-        _animator.SetFloat(_speedParameterHash, _isMoving ?  _speed : 0);
+        Health.HealthChanged += OnHealthChanged;
     }
-
 
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -73,6 +60,29 @@ public class Player : MonoBehaviour
         if (collision.collider.TryGetComponent(out Ground _))
             _isGrounded = false;
     }
+    
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.D))
+            Move(Directions.Right);
+        else if (Input.GetKey(KeyCode.A))
+            Move(Directions.Left);
+        else
+            _isMoving = false;
+
+        if (Input.GetKey(KeyCode.Space) && _isGrounded)
+            Jump();
+
+        if (Input.GetKey(KeyCode.Mouse0))
+            Attack();
+
+        _animator.SetFloat(_speedParameterHash, _isMoving ?  _speed : 0);
+    }
+    
+    private void OnDisable()
+    {
+        Health.HealthChanged -= OnHealthChanged;
+    }
 
     public void AddCoin()
     {
@@ -81,14 +91,24 @@ public class Player : MonoBehaviour
 
     private void Move(Directions direction)
     {
-        float distance = _speed * Time.deltaTime;
-
+        var rotation = transform.rotation;
+        
         if (direction == Directions.Left)
-            distance *= -1;
-
+            rotation.y = -180;
+        else
+            rotation.y = 0;
+        
+        transform.rotation = rotation;
+        
+        float distance = _speed * Time.deltaTime;
         transform.Translate(distance, 0, 0);
         _isMoving = true;
-        _renderer.flipX = direction == Directions.Left;
+    }
+
+    private void OnHealthChanged(float health)
+    {
+        if(health <= 0)
+            Destroy(gameObject);
     }
 
     private void Jump()
@@ -102,15 +122,25 @@ public class Player : MonoBehaviour
 
     private void Attack()
     {
-        var playerTransform = transform;
+        var playerPosition = transform.position;
+
+        StartCoroutine(nameof(ShowSword));
         
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(playerTransform.position, _attackSphereRadius, playerTransform.forward, _attackRange);
+        var attackLineEnd = playerPosition + transform.forward * _attackRange;
+        RaycastHit2D[] hits = Physics2D.LinecastAll(playerPosition, attackLineEnd);
 
         if (hits.Length <= 1)
             return;
 
         foreach (var hit in hits)
             if (hit.transform.TryGetComponent<Enemy>(out var enemy))
-                enemy.ApplyDamage(_damage);
+                enemy.Health.ApplyDamage(_damage);
+    }
+
+    private IEnumerator ShowSword()
+    {
+        _swordSpriteRenderer.enabled = true;
+        yield return new WaitForSeconds(1);
+        _swordSpriteRenderer.enabled = false;
     }
 }
