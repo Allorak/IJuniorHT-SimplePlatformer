@@ -4,6 +4,11 @@ using UnityEngine;
 public abstract class PickUp : MonoBehaviour
 {
     [SerializeField] private AudioClip _collectSound;
+
+    private void OnValidate()
+    {
+        GetComponent<CircleCollider2D>().isTrigger = true;
+    }
     
     private void OnTriggerEnter2D(Collider2D other)
     {

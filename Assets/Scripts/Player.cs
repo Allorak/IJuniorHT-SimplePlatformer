@@ -1,8 +1,6 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Health))]
@@ -17,18 +15,17 @@ public class Player : MonoBehaviour
 
     public Health Health { get; private set; }
 
-    private SpriteRenderer _renderer;
+    private readonly int _speedParameterHash = Animator.StringToHash("Speed");
+    private readonly int _jumpTriggerHash = Animator.StringToHash("HasJumped");
+    private readonly float _swordVisibilityDuration = 0.5f;
     private Animator _animator;
     private Rigidbody2D _rigidBody;
     private bool _isMoving;
     private bool _isGrounded = true;
-    private int _speedParameterHash = Animator.StringToHash("Speed");
-    private int _jumpTriggerHash = Animator.StringToHash("HasJumped");
     private int _coinsAmount = 0;
 
     private void Awake()
     {
-        _renderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody2D>();
         Health = GetComponent<Health>();
@@ -140,7 +137,7 @@ public class Player : MonoBehaviour
     private IEnumerator ShowSword()
     {
         _swordSpriteRenderer.enabled = true;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(_swordVisibilityDuration);
         _swordSpriteRenderer.enabled = false;
     }
 }

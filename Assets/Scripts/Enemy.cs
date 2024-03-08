@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(CircleCollider2D))]
 public class Enemy : MonoBehaviour
@@ -16,12 +15,10 @@ public class Enemy : MonoBehaviour
 
     private Waypoint[] _waypoints;
     private int _currentWaypointIndex = 0;
-    private SpriteRenderer _renderer;
     private Player _currentPlayerTarget = null;
 
     private void Awake()
     {
-        _renderer = GetComponent<SpriteRenderer>();
         Health = GetComponent<Health>();
     }
 
@@ -77,7 +74,12 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            _renderer.flipX = Mathf.Sign(movementDirection.x) < 0;
+            transform.rotation = movementDirection.x switch
+            {
+                < 0 => Quaternion.Euler(0, -180, 0),
+                > 0 => Quaternion.Euler(0, 0, 0),
+                _ => transform.rotation
+            };
         }
     }
 
