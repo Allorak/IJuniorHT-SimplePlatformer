@@ -1,12 +1,21 @@
 using UnityEngine;
-using UnityEngine.Events;
 
+[RequireComponent(typeof(Animator))]
 public class EndSign : MonoBehaviour
 {
-    [SerializeField] private UnityEvent _isReached;
+    [SerializeField] private AudioClip _reachSound;
+    
+    private Animator _animator;
+    private readonly int _reachTriggerHash = Animator.StringToHash("IsReached");
+
+    private void Awake()
+    {
+        _animator = GetComponent<Animator>();
+    }
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        _isReached?.Invoke();
+        _animator.SetTrigger(_reachTriggerHash);
+        AudioSource.PlayClipAtPoint(_reachSound, transform.position);
     }
 }
