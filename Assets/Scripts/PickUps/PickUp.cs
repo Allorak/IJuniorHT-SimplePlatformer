@@ -10,15 +10,9 @@ public abstract class PickUp : MonoBehaviour
         GetComponent<Collider2D>().isTrigger = true;
     }
     
-    private void OnTriggerEnter2D(Collider2D other)
+    public virtual void ApplyEffect(Player player)
     {
-        if (other.TryGetComponent<Player>(out var player) == false)
-            return;
-
-        ApplyEffect(player);
         AudioSource.PlayClipAtPoint(_collectSound, transform.position);
         Destroy(gameObject);
     }
-
-    protected abstract void ApplyEffect(Player player);
 }

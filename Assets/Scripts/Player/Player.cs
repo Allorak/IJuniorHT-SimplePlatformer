@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 public class Player : MonoBehaviour
 {
+    private const float SwordVisibilityDuration = 0.5f;
+    
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _groundCheckRaycastDistance;
@@ -17,7 +19,6 @@ public class Player : MonoBehaviour
 
     private readonly int _speedParameterHash = Animator.StringToHash("Speed");
     private readonly int _jumpTriggerHash = Animator.StringToHash("HasJumped");
-    private readonly float _swordVisibilityDuration = 0.5f;
     private Animator _animator;
     private Rigidbody2D _rigidBody;
     private bool _isMoving;
@@ -137,7 +138,7 @@ public class Player : MonoBehaviour
     private IEnumerator ShowSword()
     {
         _swordSpriteRenderer.enabled = true;
-        yield return new WaitForSeconds(_swordVisibilityDuration);
+        yield return new WaitForSeconds(SwordVisibilityDuration);
         _swordSpriteRenderer.enabled = false;
     }
 }
