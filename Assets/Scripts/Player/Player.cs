@@ -15,8 +15,6 @@ public class Player : MonoBehaviour
     [SerializeField] private float _attackRange;
     [SerializeField] private SpriteRenderer _swordSpriteRenderer;
 
-    public Health Health { get; private set; }
-
     private readonly int _speedParameterHash = Animator.StringToHash("Speed");
     private readonly int _jumpTriggerHash = Animator.StringToHash("HasJumped");
     private Animator _animator;
@@ -24,6 +22,8 @@ public class Player : MonoBehaviour
     private bool _isMoving;
     private bool _isGrounded = true;
     private int _coinsAmount = 0;
+    
+    public Health Health { get; private set; }
 
     private void Awake()
     {

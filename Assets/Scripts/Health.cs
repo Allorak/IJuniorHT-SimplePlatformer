@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    public event Action<float> HealthChanged;
-    
     [SerializeField] private float _health;
+    
+    public event Action<float> HealthChanged;
 
     public void ApplyDamage(float damage)
     {
