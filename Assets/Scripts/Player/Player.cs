@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
-        Health.HealthChanged += OnHealthChanged;
+        Health.Died += OnDied;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -79,7 +79,7 @@ public class Player : MonoBehaviour
     
     private void OnDisable()
     {
-        Health.HealthChanged -= OnHealthChanged;
+        Health.Died -= OnDied;
     }
 
     public void AddCoin()
@@ -103,10 +103,9 @@ public class Player : MonoBehaviour
         _isMoving = true;
     }
 
-    private void OnHealthChanged(float health)
+    private void OnDied(float health)
     {
-        if(health <= 0)
-            Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     private void Jump()

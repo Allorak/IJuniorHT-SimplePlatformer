@@ -5,7 +5,7 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float _health;
     
-    public event Action<float> HealthChanged;
+    public event Action Died;
 
     public void ApplyDamage(float damage)
     {
@@ -14,7 +14,8 @@ public class Health : MonoBehaviour
 
         _health -= damage;
         
-        HealthChanged?.Invoke(_health);
+        if(_health <= 0)
+            Died?.Invoke();
     }
     
     public void Heal(float healAmount)
@@ -23,7 +24,5 @@ public class Health : MonoBehaviour
             throw new ArgumentOutOfRangeException(nameof(healAmount), "Heal amount can't be less than 0");
 
         _health += healAmount;
-        
-        HealthChanged?.Invoke(_health);
     }
 }

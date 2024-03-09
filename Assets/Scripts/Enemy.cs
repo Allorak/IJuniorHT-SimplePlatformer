@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
 
     private void OnEnable()
     {
-        Health.HealthChanged += OnHealthChanged;
+        Health.Died += OnDied;
     }
 
     private void Start()
@@ -81,13 +81,12 @@ public class Enemy : MonoBehaviour
 
     private void OnDisable()
     {
-        Health.HealthChanged -= OnHealthChanged;
+        Health.Died -= OnDied;
     }
 
-    private void OnHealthChanged(float health)
+    private void OnDied()
     {
-        if(health <= 0)
-            Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     private Vector3 GetTargetPosition()
