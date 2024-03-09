@@ -6,9 +6,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     private const float ReachDistance = 0.15f;
-
-    public Health Health { get; private set; }
-
+    
     [SerializeField] private float _speed;
     [SerializeField] private MovementPath _path;
     [SerializeField] private float _damage;
@@ -16,6 +14,8 @@ public class Enemy : MonoBehaviour
     private Waypoint[] _waypoints;
     private int _currentWaypointIndex = 0;
     private Player _currentPlayerTarget = null;
+    
+    public Health Health { get; private set; }
 
     private void Awake()
     {
@@ -34,18 +34,14 @@ public class Enemy : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<Player>(out var player) == false)
-            return;
-
-        _currentPlayerTarget = player;
+        if (other.TryGetComponent<Player>(out var player))
+            _currentPlayerTarget = player;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.TryGetComponent<Player>(out _) == false)
-            return;
-
-        _currentPlayerTarget = null;
+        if (other.TryGetComponent<Player>(out _))
+            _currentPlayerTarget = null;
     }
 
     private void Update()
