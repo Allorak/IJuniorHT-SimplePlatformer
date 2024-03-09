@@ -1,13 +1,13 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(Collider2D))]
 public abstract class PickUp : MonoBehaviour
 {
     [SerializeField] private AudioClip _collectSound;
 
     private void OnValidate()
     {
-        GetComponent<CircleCollider2D>().isTrigger = true;
+        GetComponent<Collider2D>().isTrigger = true;
     }
     
     private void OnTriggerEnter2D(Collider2D other)
