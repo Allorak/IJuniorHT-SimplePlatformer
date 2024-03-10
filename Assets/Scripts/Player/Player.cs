@@ -103,7 +103,7 @@ public class Player : MonoBehaviour
         _isMoving = true;
     }
 
-    private void OnDied(float health)
+    private void OnDied()
     {
         Destroy(gameObject);
     }
