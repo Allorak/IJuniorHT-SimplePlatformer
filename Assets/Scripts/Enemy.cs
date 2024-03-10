@@ -61,8 +61,6 @@ public class Enemy : MonoBehaviour
 
         if (Mathf.Abs(currentPosition.x - targetPosition.x) <= ReachDistance)
         {
-            Debug.Log("Reached goal");
-            
             if (_currentPlayerTarget is null)
                 _currentWaypointIndex = ++_currentWaypointIndex % _waypoints.Length;
             else

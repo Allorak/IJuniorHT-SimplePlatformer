@@ -58,25 +58,7 @@ public class Player : MonoBehaviour
         if (collision.collider.TryGetComponent(out Ground _))
             _isGrounded = false;
     }
-    
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.D))
-            Move(Directions.Right);
-        else if (Input.GetKey(KeyCode.A))
-            Move(Directions.Left);
-        else
-            _isMoving = false;
 
-        if (Input.GetKey(KeyCode.Space) && _isGrounded)
-            Jump();
-
-        if (Input.GetKey(KeyCode.Mouse0))
-            Attack();
-
-        _animator.SetFloat(_speedParameterHash, _isMoving ?  _speed : 0);
-    }
-    
     private void OnDisable()
     {
         Health.Died -= OnDied;
@@ -87,29 +69,32 @@ public class Player : MonoBehaviour
         _coinsAmount++;
     }
 
-    private void Move(Directions direction)
+    public void Move(Directions direction)
     {
         var rotation = transform.rotation;
-        
-        if (direction == Directions.Left)
-            rotation.y = -180;
-        else
-            rotation.y = 0;
-        
+        rotation.y = direction == Directions.Right ? 0 : -180;
         transform.rotation = rotation;
         
         float distance = _speed * Time.deltaTime;
         transform.Translate(distance, 0, 0);
+        _animator.SetFloat(_speedParameterHash, _speed);
         _isMoving = true;
     }
 
-    private void OnDied()
+    public void Stop()
     {
-        Destroy(gameObject);
+        if(_isMoving == false)
+            return;
+        
+        _isMoving = false;
+        _animator.SetFloat(_speedParameterHash, 0);
     }
 
-    private void Jump()
+    public void Jump()
     {
+        if (_isGrounded == false)
+            return;
+        
         _animator.SetTrigger(_jumpTriggerHash);
 
         _rigidBody.AddForce(Vector2.up * _jumpForce);
@@ -117,7 +102,7 @@ public class Player : MonoBehaviour
         _isGrounded = false;
     }
 
-    private void Attack()
+    public void Attack()
     {
         var playerPosition = transform.position;
 
@@ -139,5 +124,10 @@ public class Player : MonoBehaviour
         _swordSpriteRenderer.enabled = true;
         yield return new WaitForSeconds(SwordVisibilityDuration);
         _swordSpriteRenderer.enabled = false;
+    }
+    
+    private void OnDied()
+    {
+        Destroy(gameObject);
     }
 }
