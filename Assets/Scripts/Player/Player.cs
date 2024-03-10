@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
         Health.Died += OnDied;
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (_isGrounded)
             return;
@@ -45,9 +45,11 @@ public class Player : MonoBehaviour
         if (collision.collider.TryGetComponent(out Ground _) == false)
             return;
 
+        var end = (Vector3)(Vector2.down * _groundCheckRaycastDistance);
+        Debug.DrawLine(transform.position, transform.position + end);
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, _groundCheckRaycastDistance);
 
-        if (hits.Length <= 1 || hits[1].collider.TryGetComponent(out Ground _) == false)
+        if (hits.Length == 0 || hits[0].collider.TryGetComponent(out Ground _) == false)
             return;
 
         _isGrounded = true;
