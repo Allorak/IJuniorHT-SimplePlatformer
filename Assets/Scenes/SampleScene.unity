@@ -7445,7 +7445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
-  _jumpForce: 500
+  _jumpForce: 400
   _groundCheckRaycastDistance: 0.1
   _damage: 20
   _attackRange: 1

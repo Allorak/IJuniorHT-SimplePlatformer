@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigidBody;
     private bool _isMoving;
     private bool _isGrounded = true;
+    private bool _shouldJump;
     private int _coinsAmount = 0;
     
     public Health Health { get; private set; }
@@ -61,6 +63,15 @@ public class Player : MonoBehaviour
             _isGrounded = false;
     }
 
+    private void FixedUpdate()
+    {
+        if (_shouldJump == false)
+            return;
+        
+        _rigidBody.AddForce(Vector2.up * _jumpForce);
+        _shouldJump = false;
+    }
+
     private void OnDisable()
     {
         Health.Died -= OnDied;
@@ -99,7 +110,7 @@ public class Player : MonoBehaviour
         
         _animator.SetTrigger(_jumpTriggerHash);
 
-        _rigidBody.AddForce(Vector2.up * _jumpForce);
+        _shouldJump = true;
 
         _isGrounded = false;
     }
