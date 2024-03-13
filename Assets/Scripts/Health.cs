@@ -8,6 +8,7 @@ public class Health : MonoBehaviour
     private float _currentHealth;
     
     public event Action Died;
+    public event Action<float, float> HealthChanged;
     
     private void Awake()
     {
@@ -20,8 +21,11 @@ public class Health : MonoBehaviour
             throw new ArgumentOutOfRangeException(nameof(damage), "Applied damage can't be less than 0");
 
         _currentHealth -= damage;
-        
-        if(_currentHealth <= 0)
+        _currentHealth = Mathf.Max(_currentHealth, 0);
+       
+        HealthChanged?.Invoke(_currentHealth, _maxHealth);
+             
+        if(_currentHealth == 0)
             Died?.Invoke();
     }
     
@@ -31,5 +35,8 @@ public class Health : MonoBehaviour
             throw new ArgumentOutOfRangeException(nameof(healAmount), "Heal amount can't be less than 0");
 
         _currentHealth += healAmount;
+        _currentHealth = Mathf.Min(_currentHealth, _maxHealth);
+        
+        HealthChanged?.Invoke(_currentHealth, _maxHealth);
     }
 }
