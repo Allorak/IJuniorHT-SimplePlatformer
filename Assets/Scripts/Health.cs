@@ -3,18 +3,25 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private float _health;
+    [SerializeField] private float _maxHealth;
+    
+    private float _currentHealth;
     
     public event Action Died;
+    
+    private void Awake()
+    {
+        _currentHealth = _maxHealth;
+    }
 
     public void ApplyDamage(float damage)
     {
         if (damage < 0)
             throw new ArgumentOutOfRangeException(nameof(damage), "Applied damage can't be less than 0");
 
-        _health -= damage;
+        _currentHealth -= damage;
         
-        if(_health <= 0)
+        if(_currentHealth <= 0)
             Died?.Invoke();
     }
     
@@ -23,6 +30,6 @@ public class Health : MonoBehaviour
         if (healAmount < 0)
             throw new ArgumentOutOfRangeException(nameof(healAmount), "Heal amount can't be less than 0");
 
-        _health += healAmount;
+        _currentHealth += healAmount;
     }
 }
